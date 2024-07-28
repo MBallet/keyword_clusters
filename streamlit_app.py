@@ -3,12 +3,9 @@ import pandas as pd
 import openai
 import matplotlib.pyplot as plt
 from io import StringIO
-from dotenv import load_dotenv
 import os
 
-load_dotenv()  # This loads environment variables from a .env file
-
-openai.api_key = os.getenv('OPENAI_API_KEY')
+openai.api_key = st.secrets('OPENAI_API_KEY')
 
 # Check if the API key is retrieved successfully
 if api_key:
