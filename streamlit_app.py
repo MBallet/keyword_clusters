@@ -3,10 +3,15 @@ import pandas as pd
 import openai
 import matplotlib.pyplot as plt
 from io import StringIO
-import os
 
-# Retrieve the OpenAI API Key from environment variables
-openai.api_key = st.secrets["OPENAI_API_KEY"]
+# Retrieve the OpenAI API Key from Streamlit secrets
+api_key = st.secrets["OPENAI_API_KEY"]
+
+# Check if the API key is retrieved successfully
+if api_key:
+    openai.api_key = api_key
+else:
+    st.error("OpenAI API key not found. Please check your Streamlit secrets configuration.")
 
 def identify_themes(keywords):
     prompt = f"Identify common themes in the following list of keywords: {', '.join(keywords)}"
