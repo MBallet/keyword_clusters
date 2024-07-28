@@ -1,57 +1,55 @@
 import streamlit as st
 import pandas as pd
-import openai
+from collections import Counter
+import itertools
 import matplotlib.pyplot as plt
-from io import StringIO
-import os
+from wordcloud import WordCloud
 
-openai.api_key = st.secrets('OPENAI_API_KEY')
+def preprocess_keywords(keywords):
+    """Split keywords into individual words."""
+    return [word.lower().split() for word in keywords]
 
-# Check if the API key is retrieved successfully
-if api_key:
-    openai.api_key = api_key
-else:
-    st.error("OpenAI API key not found. Please check your Streamlit secrets configuration.")
+def get_word_combinations(words, n):
+    """Generate word combinations of length n."""
+    return [' '.join(combo) for combo in itertools.combinations(words, n)]
 
-def identify_themes(keywords):
-    prompt = f"Identify common themes in the following list of keywords: {', '.join(keywords)}"
-    response = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=prompt,
-        max_tokens=150
-    )
-    themes = response.choices[0].text.strip().split(',')
-    return [theme.strip() for theme in themes]
+def get_top_combinations(keywords, n, top_n=10):
+    """Get the top n word combinations."""
+    all_combinations = []
+    for words in keywords:
+        if len(words) >= n:
+            all_combinations.extend(get_word_combinations(words, n))
+    combination_counts = Counter(all_combinations)
+    return combination_counts.most_common(top_n)
 
-def process_csv(file):
-    df = pd.read_csv(file)
-    keywords = df['keywords'].tolist()
-    themes = identify_themes(keywords)
-    theme_count = pd.Series(themes).value_counts()
-    return theme_count, themes
+def plot_wordcloud(data, title):
+    """Plot a wordcloud of the data."""
+    wordcloud = WordCloud(width=800, height=400, background_color='white').generate_from_frequencies(dict(data))
+    plt.figure(figsize=(10, 5))
+    plt.imshow(wordcloud, interpolation='bilinear')
+    plt.title(title)
+    plt.axis('off')
+    st.pyplot(plt)
 
-st.title("Keyword Theme Identifier")
+# Streamlit app
+st.title("Keyword Combination Visualizer")
 
-uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
+uploaded_file = st.file_uploader("Upload a CSV file", type="csv")
 
-if uploaded_file is not None:
-    theme_count, themes = process_csv(uploaded_file)
-    
-    st.subheader("Top Themes by Keyword")
-    fig, ax = plt.subplots()
-    theme_count.plot(kind='bar', ax=ax)
-    st.pyplot(fig)
-    
-    st.subheader("Themes")
-    st.write(theme_count)
-    
-    # Adding an option to download the data as a CSV
-    csv = StringIO()
-    theme_count.to_csv(csv)
-    csv.seek(0)
-    st.download_button(
-        label="Download data as CSV",
-        data=csv,
-        file_name='themes.csv',
-        mime='text/csv',
-    )
+if uploaded_file:
+    df = pd.read_csv(uploaded_file)
+    if 'keywords' not in df.columns or 'volume' not in df.columns:
+        st.error("CSV file must contain 'keywords' and 'volume' columns.")
+    else:
+        keywords = df['keywords'].tolist()
+        keywords_processed = preprocess_keywords(keywords)
+        
+        st.subheader("Top 2-word Combinations")
+        top_2_combinations = get_top_combinations(keywords_processed, 2)
+        st.write(pd.DataFrame(top_2_combinations, columns=['Combination', 'Count']))
+        plot_wordcloud(top_2_combinations, "Top 2-word Combinations")
+        
+        st.subheader("Top 3-word Combinations")
+        top_3_combinations = get_top_combinations(keywords_processed, 3)
+        st.write(pd.DataFrame(top_3_combinations, columns=['Combination', 'Count']))
+        plot_wordcloud(top_3_combinations, "Top 3-word Combinations")
