@@ -3,6 +3,12 @@ import pandas as pd
 import openai
 import matplotlib.pyplot as plt
 from io import StringIO
+from dotenv import load_dotenv
+import os
+
+load_dotenv()  # This loads environment variables from a .env file
+
+openai.api_key = os.getenv('OPENAI_API_KEY')
 
 # Retrieve the OpenAI API Key from Streamlit secrets
 openai.api_key = os.getenv("OPENAI_API_KEY")
