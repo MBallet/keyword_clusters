@@ -10,9 +10,6 @@ load_dotenv()  # This loads environment variables from a .env file
 
 openai.api_key = os.getenv('OPENAI_API_KEY')
 
-# Retrieve the OpenAI API Key from Streamlit secrets
-openai.api_key = os.getenv("OPENAI_API_KEY")
-
 # Check if the API key is retrieved successfully
 if api_key:
     openai.api_key = api_key
