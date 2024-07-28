@@ -6,7 +6,7 @@ from io import StringIO
 import os
 
 # Retrieve the OpenAI API Key from environment variables
-openai.api_key = secrets.OPENAI_API_KEY
+openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 def identify_themes(keywords):
     prompt = f"Identify common themes in the following list of keywords: {', '.join(keywords)}"
