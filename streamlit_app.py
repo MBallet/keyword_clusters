@@ -1,6 +1,6 @@
 import streamlit as st
 
-st.title("Keyword Cluster-er")
+st.title(":balloon: Keyword Cluster-er")
 st.write(
     "Reference: [docs.streamlit.io](https://docs.streamlit.io/)."
 )
