@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from io import StringIO
 
 # Retrieve the OpenAI API Key from Streamlit secrets
-api_key = st.secrets["OPENAI_API_KEY"]
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # Check if the API key is retrieved successfully
 if api_key:
