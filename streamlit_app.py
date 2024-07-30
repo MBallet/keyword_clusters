@@ -8,11 +8,11 @@ client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 # Function to get themes using OpenAI API
 def get_keyword_themes(keywords):
     try:
-        prompt = f"Identify the main themes from the following list of keywords:\n\n{', '.join(keywords)}\n\nReturn the themes and the number of keywords under each theme."
+        prompt = f"Identify the main themes from the following list of keywords:\n\n{', '.join(keywords)}\n\nReturn the themes and the number of keywords under each theme in markdown format with category names in H2."
         response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4o-mini",
             messages=[
-                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "system", "content": "You are an SEO expert skilled at finding keyword topic clusters"},
                 {"role": "user", "content": prompt}
             ]
         )
