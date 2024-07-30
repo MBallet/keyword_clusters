@@ -33,10 +33,10 @@ if uploaded_file:
         st.write("Keywords from the uploaded file:")
         st.write(keywords_df)
         
-        if 'keyword' not in keywords_df.columns:
-            st.error("CSV must contain a column named 'keyword'")
+        if 'Keyword' not in keywords_df.columns:
+            st.error("CSV must contain a column named 'Keyword'")
         else:
-            keywords = keywords_df['keyword'].tolist()
+            keywords = keywords_df['Keyword'].tolist()
             themes = get_keyword_themes(keywords)
             
             if themes:
