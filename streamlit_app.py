@@ -1,29 +1,28 @@
 import streamlit as st
 import pandas as pd
-import openai
+from openai import OpenAI
 
 # Set up OpenAI API
-openai.api_key = st.secrets["OPENAI_API_KEY"]
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
 # Function to get themes using OpenAI API
 def get_keyword_themes(keywords):
     try:
         prompt = f"Identify the main themes from the following list of keywords:\n\n{', '.join(keywords)}\n\nReturn the themes and the number of keywords under each theme."
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",  # Use a valid model like gpt-3.5-turbo
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
                 {"role": "user", "content": prompt}
             ]
         )
-        return response.choices[0].message['content'].strip()
+        return response.choices[0].message.content.strip()
     except Exception as e:
         st.error(f"OpenAI API error: {e}")
         return None
 
 # Streamlit UI
 st.title("Keyword Theme Analyzer")
-
 uploaded_file = st.file_uploader("Upload a CSV file with keywords", type="csv")
 
 if uploaded_file:
