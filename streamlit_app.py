@@ -9,15 +9,16 @@ openai.api_key = st.secrets["OPENAI_API_KEY"]
 def get_keyword_themes(keywords):
     try:
         prompt = f"Identify the main themes from the following list of keywords:\n\n{', '.join(keywords)}\n\nReturn the themes and the number of keywords under each theme."
-        response = openai.Completion.create(
-            engine="text-davinci-003",  # Correct engine name
-            prompt=prompt,
+        response = openai.ChatCompletion.create(
+            model="gpt-4",  # Updated to use the new ChatCompletion API and a valid model
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": prompt}
+            ],
             max_tokens=150,
-            n=1,
-            stop=None,
             temperature=0.5,
         )
-        return response.choices[0].text.strip()
+        return response.choices[0].message['content'].strip()
     except Exception as e:
         st.error(f"OpenAI API error: {e}")
         return None
@@ -33,10 +34,10 @@ if uploaded_file:
         st.write("Keywords from the uploaded file:")
         st.write(keywords_df)
         
-        if 'Keyword' not in keywords_df.columns:
-            st.error("CSV must contain a column named 'Keyword'")
+        if 'keyword' not in keywords_df.columns:
+            st.error("CSV must contain a column named 'keyword'")
         else:
-            keywords = keywords_df['Keyword'].tolist()
+            keywords = keywords_df['keyword'].tolist()
             themes = get_keyword_themes(keywords)
             
             if themes:
