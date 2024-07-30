@@ -7,16 +7,20 @@ openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 # Function to get themes using OpenAI API
 def get_keyword_themes(keywords):
-    prompt = f"Identify the main themes from the following list of keywords:\n\n{', '.join(keywords)}\n\nReturn the themes and the number of keywords under each theme."
-    response = openai.Completion.create(
-        engine="gpt-4o-mini",
-        prompt=prompt,
-        max_tokens=150,
-        n=1,
-        stop=None,
-        temperature=0.5,
-    )
-    return response.choices[0].text.strip()
+    try:
+        prompt = f"Identify the main themes from the following list of keywords:\n\n{', '.join(keywords)}\n\nReturn the themes and the number of keywords under each theme."
+        response = openai.Completion.create(
+            engine="text-davinci-003",  # Correct engine name
+            prompt=prompt,
+            max_tokens=150,
+            n=1,
+            stop=None,
+            temperature=0.5,
+        )
+        return response.choices[0].text.strip()
+    except Exception as e:
+        st.error(f"OpenAI API error: {e}")
+        return None
 
 # Streamlit UI
 st.title("Keyword Theme Analyzer")
@@ -29,10 +33,16 @@ if uploaded_file:
         st.write("Keywords from the uploaded file:")
         st.write(keywords_df)
         
-        keywords = keywords_df['keyword'].tolist()  # Assuming 'keyword' is the column name
-        themes = get_keyword_themes(keywords)
-        
-        st.write("Keyword Themes and Counts:")
-        st.write(themes)
+        if 'keyword' not in keywords_df.columns:
+            st.error("CSV must contain a column named 'keyword'")
+        else:
+            keywords = keywords_df['keyword'].tolist()
+            themes = get_keyword_themes(keywords)
+            
+            if themes:
+                st.write("Keyword Themes and Counts:")
+                st.write(themes)
+            else:
+                st.write("No themes were returned from the API.")
     except Exception as e:
-        st.error(f"Error: {e}")
+        st.error(f"Error processing the uploaded file: {e}")
