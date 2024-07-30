@@ -10,13 +10,11 @@ def get_keyword_themes(keywords):
     try:
         prompt = f"Identify the main themes from the following list of keywords:\n\n{', '.join(keywords)}\n\nReturn the themes and the number of keywords under each theme."
         response = openai.ChatCompletion.create(
-            model="gpt-4",  # Updated to use the new ChatCompletion API and a valid model
+            model="gpt-3.5-turbo",  # Use a valid model like gpt-3.5-turbo
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
                 {"role": "user", "content": prompt}
-            ],
-            max_tokens=150,
-            temperature=0.5,
+            ]
         )
         return response.choices[0].message['content'].strip()
     except Exception as e:
