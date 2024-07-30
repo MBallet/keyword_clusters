@@ -9,7 +9,7 @@ openai.api_key = st.secrets["OPENAI_API_KEY"]
 def get_keyword_themes(keywords):
     prompt = f"Identify the main themes from the following list of keywords:\n\n{', '.join(keywords)}\n\nReturn the themes and the number of keywords under each theme."
     response = openai.Completion.create(
-        engine="text-davinci-003",
+        engine="gpt-4o-mini",
         prompt=prompt,
         max_tokens=150,
         n=1,
