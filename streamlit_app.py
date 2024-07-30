@@ -29,7 +29,7 @@ if uploaded_file:
         st.write("Keywords from the uploaded file:")
         st.write(keywords_df)
         
-        keywords = keywords_df['keywords'].tolist()  # Assuming 'keywords' is the column name
+        keywords = keywords_df['keyword'].tolist()  # Assuming 'keyword' is the column name
         themes = get_keyword_themes(keywords)
         
         st.write("Keyword Themes and Counts:")
