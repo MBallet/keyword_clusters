@@ -22,7 +22,22 @@ def get_keyword_themes(keywords):
         return None
 
 # Streamlit UI
-st.title("Keyword Theme Analyzer")
+# Set the page configuration
+st.set_page_config(page_title="Keyword Theme Analyzer", page_icon=":mag:")
+
+# Load the logo image (use the appropriate path if the image is local)
+logo_url = "https://djeholdingscom.cachefly.net/sites/g/files/aatuss516/files/styles/holding_logo_original/public/2024-03/DXI-new-logo.png?itok=xaoiwJJ7"
+
+# HTML and CSS for the header
+header_html = f"""
+<div style="display: flex; align-items: center; padding: 10px; background-color: #f8f9fa; border-radius: 10px;">
+    <img src="{logo_url}" width="150px" style="margin-right: 20px;">
+    <h1 style="margin: 0; color: #000000;">Keyword Theme Analyzer</h1>
+</div>
+"""
+
+# Render the header in Streamlit
+st.markdown(header_html, unsafe_allow_html=True)
 uploaded_file = st.file_uploader("Upload a CSV file with keywords", type="csv")
 
 if uploaded_file:
